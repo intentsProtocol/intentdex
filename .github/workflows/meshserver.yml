@@ -1,0 +1,61 @@
+# Checks for the Mesh server (Intent-protocol/BCHMesh/meshserver).
+# Nothing here needs a secret, a wallet or the network beyond installing packages:
+# the tests run against mocks and the fill checks run in the BCH virtual machine.
+name: Mesh server
+
+on:
+  push:
+    paths:
+      - 'Intent-protocol/BCHMesh/meshserver/**'
+      - '.github/workflows/meshserver.yml'
+  pull_request:
+    paths:
+      - 'Intent-protocol/BCHMesh/meshserver/**'
+      - '.github/workflows/meshserver.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meshserver-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: Intent-protocol/BCHMesh/meshserver
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Intent-protocol/BCHMesh/meshserver/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: No private key or API key in a tracked file
+        run: npm run check:secrets
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Unit and API tests
+        run: npm test
+
+      # every transaction the solver and the Mesh Balancer would broadcast, verified against the real covenants
+      - name: Fills verified in the BCH virtual machine
+        run: |
+          npx tsx scripts/check-v3-fills.ts
+          npx tsx scripts/check-split-fills.ts
+          npx tsx scripts/check-balancer-fills.ts
+          npx tsx scripts/check-parallel-fills.ts
+
+      - name: No high or critical advisory in what ships
+        run: npm audit --omit=dev --audit-level=high
