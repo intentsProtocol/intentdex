@@ -1,0 +1,32 @@
+{"at":"2026-10-08T10:48:39.862Z","name":"attested while relaying is off","ok":true,"detail":"ATTESTED"}
+{"at":"2026-10-08T10:48:39.863Z","name":"still waiting 40 s later, with the reason shown, no mint sent","ok":true,"detail":"ATTESTED · relaying is switched off by an admin; the user can self-mint"}
+{"at":"2026-10-08T10:48:39.863Z","name":"the user could mint it themselves meanwhile (message + attestation exposed)","ok":true,"detail":""}
+{"at":"2026-10-08T10:48:39.864Z","name":"stop → FAILED with the operator reason","ok":true,"detail":"FAILED"}
+{"at":"2026-10-08T10:48:39.864Z","name":"reopen resumes at the mint step","ok":true,"detail":"ATTESTED"}
+{"at":"2026-10-08T10:48:39.865Z","name":"relaying on → delivered","ok":true,"detail":"COMPLETED mint 0x5bebe6843f4e044c69d917d9251a9c6dc6d153352b5e1f52b95fa6ff9bf46a59"}
+{"at":"2026-10-08T10:48:39.865Z","name":"exactly one mint broadcast","ok":true,"detail":"1 broadcast(s)"}
+{"at":"2026-10-08T10:48:39.865Z","name":"recipient balance moved by exactly the recorded amount","ok":true,"detail":"received 1 · delta 1"}
+{"at":"2026-10-08T10:48:39.866Z","name":"the event log has the whole story","ok":true,"detail":"transfer.created → transfer.burn_submitted → transfer.burn_confirmed → transfer.attested → transfer.failed → admin.transfer.fail → transfer.attested → admin.transfer.reopen → transfer.mint_submitted → transfer.completed"}
+{"at":"2026-10-08T10:48:39.866Z","name":"paused","ok":true,"detail":""}
+{"at":"2026-10-08T10:48:39.866Z","name":"a new transfer while paused → 503","ok":true,"detail":"503"}
+{"at":"2026-10-08T10:48:39.867Z","name":"the transfer already burned is still delivered","ok":true,"detail":"COMPLETED in 13 s"}
+{"at":"2026-10-08T10:48:39.867Z","name":"balance matches","ok":true,"detail":"received 0.9999 · delta 0.9999"}
+{"at":"2026-10-08T10:48:39.867Z","name":"solana-devnet → arc-testnet delivered in parallel","ok":true,"detail":"COMPLETED · received 1 · delta 1 · 15 s"}
+{"at":"2026-10-08T10:48:39.867Z","name":"solana-devnet → eth-sepolia delivered in parallel","ok":false,"detail":"COMPLETED · received 1 · delta 0 · 17 s"}
+{"at":"2026-10-08T10:48:39.868Z","name":"eth-sepolia → solana-devnet delivered in parallel","ok":false,"detail":"COMPLETED · received 0.9999 · delta -1.0001 · 31 s"}
+{"at":"2026-10-08T10:48:39.868Z","name":"1.5 USDC: delivered, received = amount − fee, fee within the quoted max","ok":true,"detail":"COMPLETED · received 1.5 · fee 0 (max 0)"}
+{"at":"2026-10-08T10:48:39.868Z","name":"2.25 USDC: delivered, received = amount − fee, fee within the quoted max","ok":true,"detail":"COMPLETED · received 2.25 · fee 0 (max 0)"}
+{"at":"2026-10-08T10:48:39.868Z","name":"3 USDC: delivered, received = amount − fee, fee within the quoted max","ok":true,"detail":"COMPLETED · received 3 · fee 0 (max 0)"}
+{"at":"2026-10-08T11:03:06.487Z","name":"solana-devnet → arc-testnet delivered in parallel","ok":true,"detail":"COMPLETED · received 1 · 16 s"}
+{"at":"2026-10-08T11:03:06.501Z","name":"solana-devnet → eth-sepolia delivered in parallel","ok":true,"detail":"COMPLETED · received 1 · 21 s"}
+{"at":"2026-10-08T11:03:06.502Z","name":"eth-sepolia → solana-devnet delivered in parallel","ok":true,"detail":"COMPLETED · received 0.9999 · 31 s"}
+{"at":"2026-10-08T11:03:06.502Z","name":"solana-devnet: test wallet USDC moved by exactly received − sent","ok":true,"detail":"expected -1.0001 · actual -1.0001"}
+{"at":"2026-10-08T11:03:06.502Z","name":"eth-sepolia: test wallet USDC moved by exactly received − sent","ok":true,"detail":"expected 0 · actual 0"}
+{"at":"2026-10-08T11:03:06.503Z","name":"arc-testnet: test wallet USDC moved by exactly received − sent","ok":true,"detail":"expected 1 · actual 1"}
+{"at":"2026-10-08T14:40:59.042Z","name":"attested, and the mint is on hold for the fee","ok":true,"detail":"ATTESTED · awaiting · waiting for the service fee (POST /transfers/:id/fee); the user can also mint this transfer themselves"}
+{"at":"2026-10-08T14:40:59.124Z","name":"still held 30 s later; the user could mint it themselves","ok":true,"detail":"ATTESTED · waiting for the service fee (POST /transfers/:id/fee); the user can also mint this transfer themselves"}
+{"at":"2026-10-08T14:40:59.142Z","name":"offering the burn hash as the fee is refused","ok":true,"detail":"400"}
+{"at":"2026-10-08T14:40:59.143Z","name":"fee transfer sent and its hash accepted","ok":true,"detail":"200 0x48cb3f1de3c6267fad0e553d67351b5633ed663713e1ea4927b3a0812bf2ed8f"}
+{"at":"2026-10-08T14:40:59.143Z","name":"fee seen → delivered, fee marked paid","ok":true,"detail":"COMPLETED · paid · mint 0xd18ac62b3fcb3e5c0fa665e467296acfa210c3c068eac128cd31b2293908d411"}
+{"at":"2026-10-08T14:40:59.144Z","name":"the treasury received exactly the fee","ok":true,"detail":"expected 0.01 · got 0.01"}
+{"at":"2026-10-08T14:40:59.144Z","name":"the recipient received exactly the recorded amount","ok":true,"detail":"received 0.989872 · delta 0.989872"}

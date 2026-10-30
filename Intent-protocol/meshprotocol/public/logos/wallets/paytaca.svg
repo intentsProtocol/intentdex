@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Paytaca">
+  <!-- Placeholder. Replace this file with the wallet's real logo: same name, square, any size. -->
+  <rect width="48" height="48" rx="12" fill="#0c2d4d"/>
+  <text x="24" y="31" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="800" fill="#60a5fa">P</text>
+</svg>

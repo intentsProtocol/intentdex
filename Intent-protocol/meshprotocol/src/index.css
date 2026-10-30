@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-base: #f4f6f9;
+    --bg-surface: #ffffff;
+    --bg-card: #ffffff;
+    --bg-subtle: #eaedf2;
+    --bg-input: #ffffff;
+    --border-grid: #cbd5e1;
+    --border-card: #cbd5e1;
+    --border-subtle: #e2e8f0;
+    --text-primary: #090d16;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --btn-primary-bg: #090d16;
+    --btn-primary-text: #ffffff;
+    --btn-secondary-bg: #ffffff;
+    --btn-secondary-border: #cbd5e1;
+    --btn-secondary-text: #090d16;
+    --crosshair-bg: #cbd5e1;
+    --crosshair-stroke: #475569;
+  }
+
+  .dark {
+    --bg-base: #0d0f15;
+    --bg-surface: #131722;
+    --bg-card: #151a27;
+    --bg-subtle: #1c2233;
+    --bg-input: #0f131d;
+    --border-grid: #262e42;
+    --border-card: #283247;
+    --border-subtle: #1e2538;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #8ca0b8;
+    --btn-primary-bg: #f8fafc;
+    --btn-primary-text: #0d0f15;
+    --btn-secondary-bg: #151a27;
+    --btn-secondary-border: #333f5c;
+    --btn-secondary-text: #f8fafc;
+    --crosshair-bg: #20273a;
+    --crosshair-stroke: #94a3b8;
+  }
+
+  * {
+    border-color: var(--border-card);
+    scrollbar-width: thin;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+}
+
+/* High-contrast custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #2b364d;
+}
+
+.wireframe-border {
+  border-color: var(--border-grid);
+}
+
+.wireframe-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
+}
