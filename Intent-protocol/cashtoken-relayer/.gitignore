@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+*.log
+test-wallet-balance.ts
+test_env.ts
+.DS_Store
+.claude/
+intents.json
+intents.json.bak*
+profit-ledger.json
+test/reports/
+wallet.json
+planet_wallets.json
+balance_result.txt
+solver_result.log

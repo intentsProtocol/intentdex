@@ -1,0 +1,14 @@
+# Not uploaded by `railway up`. Keys and local state never leave this machine.
+node_modules
+dist
+.env
+.env.*
+*.log
+intents.json
+intents.json.*
+profit-ledger.json
+planet_wallets.json
+wallet.json
+*wallet*.json
+balance_result.txt
+test/reports

@@ -1,0 +1,12 @@
+# Railway builds the Dockerfile and waits for /health before sending traffic.
+# The start command is the Dockerfile's own: it runs from /data, where the volume is mounted.
+# Variables and the volume are set on the service, not here: see docs/deploy-railway.md.
+
+[build]
+dockerfile = "Dockerfile"
+
+[deploy]
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5
+healthcheckPath = "/health"
+healthcheckTimeout = 60

@@ -1,0 +1,171 @@
+{
+  "contractName": "LimitOrderSwap",
+  "constructorInputs": [
+    {
+      "name": "makerPkh",
+      "type": "bytes20"
+    },
+    {
+      "name": "sellTokenCategory",
+      "type": "bytes"
+    },
+    {
+      "name": "buyTokenCategory",
+      "type": "bytes"
+    },
+    {
+      "name": "sellAmount",
+      "type": "int"
+    },
+    {
+      "name": "buyAmount",
+      "type": "int"
+    },
+    {
+      "name": "expiryTime",
+      "type": "int"
+    }
+  ],
+  "abi": [
+    {
+      "name": "fill",
+      "inputs": [
+        {
+          "name": "resolverPk",
+          "type": "pubkey"
+        },
+        {
+          "name": "resolverSig",
+          "type": "sig"
+        }
+      ]
+    },
+    {
+      "name": "cancel",
+      "inputs": []
+    },
+    {
+      "name": "cancelEarly",
+      "inputs": [
+        {
+          "name": "makerPk",
+          "type": "pubkey"
+        },
+        {
+          "name": "makerSig",
+          "type": "sig"
+        }
+      ]
+    }
+  ],
+  "bytecode": "OP_6 OP_PICK OP_0 OP_NUMEQUAL OP_IF OP_8 OP_ROLL OP_8 OP_PICK OP_CHECKSIGVERIFY OP_TXINPUTCOUNT OP_2 OP_NUMEQUALVERIFY OP_TXLOCKTIME OP_DUP 0065cd1d OP_GREATERTHANOREQUAL OP_VERIFY OP_6 OP_ROLL OP_LESSTHAN OP_VERIFY 76a914 OP_SWAP OP_CAT 88ac OP_CAT OP_0 OP_OUTPUTBYTECODE OP_EQUALVERIFY OP_OVER OP_0 OP_EQUAL OP_IF OP_0 OP_OUTPUTVALUE OP_4 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ELSE OP_0 OP_OUTPUTTOKENCATEGORY OP_2 OP_PICK OP_EQUALVERIFY OP_0 OP_OUTPUTTOKENAMOUNT OP_4 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_0 OP_OUTPUTVALUE e803 OP_GREATERTHANOREQUAL OP_VERIFY OP_ENDIF OP_5 OP_ROLL OP_HASH160 76a914 OP_SWAP OP_CAT 88ac OP_CAT OP_1 OP_OUTPUTBYTECODE OP_EQUALVERIFY OP_DUP OP_0 OP_EQUAL OP_IF OP_1 OP_OUTPUTVALUE OP_3 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ELSE OP_1 OP_OUTPUTTOKENCATEGORY OP_OVER OP_EQUALVERIFY OP_1 OP_OUTPUTTOKENAMOUNT OP_3 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ENDIF OP_2DROP OP_2DROP OP_DROP OP_1 OP_ELSE OP_6 OP_PICK OP_1 OP_NUMEQUAL OP_IF OP_5 OP_ROLL OP_CHECKLOCKTIMEVERIFY OP_DROP 76a914 OP_SWAP OP_CAT 88ac OP_CAT OP_0 OP_OUTPUTBYTECODE OP_EQUALVERIFY OP_DUP OP_0 OP_EQUAL OP_IF OP_0 OP_OUTPUTVALUE OP_3 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ELSE OP_0 OP_OUTPUTTOKENCATEGORY OP_OVER OP_EQUALVERIFY OP_0 OP_OUTPUTTOKENAMOUNT OP_3 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ENDIF OP_2DROP OP_2DROP OP_DROP OP_1 OP_ELSE OP_6 OP_ROLL OP_2 OP_NUMEQUALVERIFY OP_6 OP_PICK OP_HASH160 OP_OVER OP_EQUALVERIFY OP_7 OP_ROLL OP_7 OP_ROLL OP_CHECKSIGVERIFY 76a914 OP_SWAP OP_CAT 88ac OP_CAT OP_0 OP_OUTPUTBYTECODE OP_EQUALVERIFY OP_DUP OP_0 OP_EQUAL OP_IF OP_0 OP_OUTPUTVALUE OP_3 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ELSE OP_0 OP_OUTPUTTOKENCATEGORY OP_OVER OP_EQUALVERIFY OP_0 OP_OUTPUTTOKENAMOUNT OP_3 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ENDIF OP_2DROP OP_2DROP OP_DROP OP_1 OP_ENDIF OP_ENDIF",
+  "source": "pragma cashscript ^0.12.0;\r\n\r\n// =============================================================================\r\n// LimitOrderSwap — Fixed-price CashToken swap (mirrors limit_order.move)\r\n// =============================================================================\r\n//\r\n// Simpler than Dutch Auction: The maker specifies an exact price.\r\n// Resolver must provide exactly `buyAmount` of `buyToken` to the maker.\r\n\r\ncontract LimitOrderSwap(\r\n    // Maker's public key hash (recipient of buy-tokens)\r\n    bytes20 makerPkh,\r\n    // Token category of the sell token (bytes32, 0x for native BCH)\r\n    bytes sellTokenCategory,\r\n    // Token category of the buy token (bytes32, 0x for native BCH)\r\n    bytes buyTokenCategory,\r\n    // Amount of sell tokens locked\r\n    int sellAmount,\r\n    // Fixed buy amount required\r\n    int buyAmount,\r\n    // Expiry time (unix timestamp) — order is invalid after this\r\n    int expiryTime\r\n) {\r\n    // =========================================================================\r\n    // fill() — Resolver fills the limit order at the fixed price\r\n    // =========================================================================\r\n    function fill(pubkey resolverPk, sig resolverSig) {\r\n        // Verify resolver's signature\r\n        require(checkSig(resolverSig, resolverPk));\r\n\r\n        // Prevent 3rd-party UTXO drain: only covenant + resolver inputs allowed\r\n        require(tx.inputs.length == 2);\r\n\r\n        // Must be before expiry\r\n        int currentTime = tx.locktime;\r\n\r\n        // Enforce unix timestamp interpretation (not block number)\r\n        require(currentTime >= 500000000);\r\n\r\n        require(currentTime < expiryTime);\r\n\r\n        // --- Covenant: Enforce output constraints ---\r\n\r\n        // Output 0: Must send exactly buyAmount to the maker\r\n        bytes25 makerLockingBytecode = new LockingBytecodeP2PKH(makerPkh);\r\n        require(tx.outputs[0].lockingBytecode == makerLockingBytecode);\r\n\r\n        if (buyTokenCategory == 0x) {\r\n            // Native BCH\r\n            require(tx.outputs[0].value >= buyAmount);\r\n        } else {\r\n            // CashToken\r\n            require(tx.outputs[0].tokenCategory == buyTokenCategory);\r\n            require(tx.outputs[0].tokenAmount >= buyAmount);\r\n            require(tx.outputs[0].value >= 1000);\r\n        }\r\n\r\n        // Output 1: Must send sell tokens to the resolver\r\n        bytes20 resolverPkh = hash160(resolverPk);\r\n        bytes25 resolverLockingBytecode = new LockingBytecodeP2PKH(resolverPkh);\r\n        require(tx.outputs[1].lockingBytecode == resolverLockingBytecode);\r\n\r\n        if (sellTokenCategory == 0x) {\r\n            require(tx.outputs[1].value >= sellAmount);\r\n        } else {\r\n            require(tx.outputs[1].tokenCategory == sellTokenCategory);\r\n            require(tx.outputs[1].tokenAmount >= sellAmount);\r\n        }\r\n    }\r\n\r\n    // =========================================================================\r\n    // cancel() — Trustless refund: Anyone can trigger after expiry to refund maker\r\n    // =========================================================================\r\n    function cancel() {\r\n        // Can only cancel after expiry\r\n        require(tx.time >= expiryTime);\r\n\r\n        // Output 0: Must send locked funds back to the maker\r\n        bytes25 makerLockingBytecode = new LockingBytecodeP2PKH(makerPkh);\r\n        require(tx.outputs[0].lockingBytecode == makerLockingBytecode);\r\n\r\n        if (sellTokenCategory == 0x) {\r\n            require(tx.outputs[0].value >= sellAmount);\r\n        } else {\r\n            require(tx.outputs[0].tokenCategory == sellTokenCategory);\r\n            require(tx.outputs[0].tokenAmount >= sellAmount);\r\n        }\r\n    }\r\n\r\n    // =========================================================================\r\n    // cancelEarly() — Maker-authorized refund, available at ANY time\r\n    // =========================================================================\r\n    //\r\n    // cancel() above is intentionally permissionless (anyone can trigger it)\r\n    // but is gated on `tx.time >= expiryTime`, so the maker cannot reclaim\r\n    // their own funds before the order expires. cancelEarly() closes that gap:\r\n    // it requires the maker's own signature (proving consent) and has NO time\r\n    // constraint, so the maker can always back out of an unfilled order.\r\n    //\r\n    // Because only the maker holds the private key for makerPkh, no other\r\n    // party (resolver, relayer, or attacker) can invoke this branch. The\r\n    // output constraints mirror cancel() exactly — even though the maker is\r\n    // authorizing their own spend, the covenant still enforces that the funds\r\n    // land back at the maker's own address for exactly sellAmount, so a bug\r\n    // in a client (frontend) cannot misdirect or short-change the refund.\r\n    function cancelEarly(pubkey makerPk, sig makerSig) {\r\n        require(hash160(makerPk) == makerPkh);\r\n        require(checkSig(makerSig, makerPk));\r\n\r\n        // Output 0: Must send locked funds back to the maker\r\n        bytes25 makerLockingBytecode = new LockingBytecodeP2PKH(makerPkh);\r\n        require(tx.outputs[0].lockingBytecode == makerLockingBytecode);\r\n\r\n        if (sellTokenCategory == 0x) {\r\n            require(tx.outputs[0].value >= sellAmount);\r\n        } else {\r\n            require(tx.outputs[0].tokenCategory == sellTokenCategory);\r\n            require(tx.outputs[0].tokenAmount >= sellAmount);\r\n        }\r\n    }\r\n}\r\n",
+  "debug": {
+    "bytecode": "5679009c63587a5879adc3529dc576040065cd1da269567a9f690376a9147c7e0288ac7e00cd887800876300cc5479a2696700d152798800d35479a26900cc02e803a26968557aa90376a9147c7e0288ac7e51cd887600876351cc5379a2696751d1788851d35379a269686d6d7551675679519c63557ab1750376a9147c7e0288ac7e00cd887600876300cc5379a2696700d1788800d35379a269686d6d755167567a529d5679a97888577a577aad0376a9147c7e0288ac7e00cd887600876300cc5379a2696700d1788800d35379a269686d6d75516868",
+    "sourceMap": "27:4:69:5;;;;;29:25:29:36;;:38::48;;:8::51:1;32:16:32:32:0;:36::37;:8::39:1;35:26:35:37:0;38:16:38:27;:31::40;:16:::1;:8::42;40:30:40:40:0;;:16:::1;:8::42;45:39:45:73:0;:64::72;:39::73:1;;;46:27:46:28:0;:16::45:1;:8::71;48:12:48:28:0;:32::34;:12:::1;:36:51:9:0;50:31:50:32;:20::39:1;:43::52:0;;:20:::1;:12::54;51:15:56:9:0;53:31:53:32;:20::47:1;:51::67:0;;:12::69:1;54:31:54:32:0;:20::45:1;:49::58:0;;:20:::1;:12::60;55:31:55:32:0;:20::39:1;:43::47:0;:20:::1;:12::49;51:15:56:9;59:38:59:48:0;;:30::49:1;60:42:60:79:0;:67::78;:42::79:1;;;61:27:61:28:0;:16::45:1;:8::74;63:12:63:29:0;:33::35;:12:::1;:37:65:9:0;64:31:64:32;:20::39:1;:43::53:0;;:20:::1;:12::55;65:15:68:9:0;66:31:66:32;:20::47:1;:51::68:0;:12::70:1;67:31:67:32:0;:20::45:1;:49::59:0;;:20:::1;:12::61;65:15:68:9;27:4:69:5;;;;;74::88::0;;;;;76:27:76:37;;:8::39:1;;79:39:79:73:0;:64::72;:39::73:1;;;80:27:80:28:0;:16::45:1;:8::71;82:12:82:29:0;:33::35;:12:::1;:37:84:9:0;83:31:83:32;:20::39:1;:43::53:0;;:20:::1;:12::55;84:15:87:9:0;85:31:85:32;:20::47:1;:51::68:0;:12::70:1;86:31:86:32:0;:20::45:1;:49::59:0;;:20:::1;:12::61;84:15:87:9;74:4:88:5;;;;;106::120::0;;;;107:24:107:31;;:16::32:1;:36::44:0;:8::46:1;108:25:108:33:0;;:35::42;;:8::45:1;111:39:111:73:0;:64::72;:39::73:1;;;112:27:112:28:0;:16::45:1;:8::71;114:12:114:29:0;:33::35;:12:::1;:37:116:9:0;115:31:115:32;:20::39:1;:43::53:0;;:20:::1;:12::55;116:15:119:9:0;117:31:117:32;:20::47:1;:51::68:0;:12::70:1;118:31:118:32:0;:20::45:1;:49::59:0;;:20:::1;:12::61;116:15:119:9;106:4:120:5;;;;10:0:121:1;",
+    "logs": [],
+    "requires": [
+      {
+        "ip": 15,
+        "line": 29
+      },
+      {
+        "ip": 18,
+        "line": 32
+      },
+      {
+        "ip": 23,
+        "line": 38
+      },
+      {
+        "ip": 27,
+        "line": 40
+      },
+      {
+        "ip": 35,
+        "line": 46
+      },
+      {
+        "ip": 45,
+        "line": 50
+      },
+      {
+        "ip": 51,
+        "line": 53
+      },
+      {
+        "ip": 57,
+        "line": 54
+      },
+      {
+        "ip": 62,
+        "line": 55
+      },
+      {
+        "ip": 74,
+        "line": 61
+      },
+      {
+        "ip": 84,
+        "line": 64
+      },
+      {
+        "ip": 89,
+        "line": 66
+      },
+      {
+        "ip": 95,
+        "line": 67
+      },
+      {
+        "ip": 109,
+        "line": 76
+      },
+      {
+        "ip": 118,
+        "line": 80
+      },
+      {
+        "ip": 128,
+        "line": 83
+      },
+      {
+        "ip": 133,
+        "line": 85
+      },
+      {
+        "ip": 139,
+        "line": 86
+      },
+      {
+        "ip": 154,
+        "line": 107
+      },
+      {
+        "ip": 159,
+        "line": 108
+      },
+      {
+        "ip": 167,
+        "line": 112
+      },
+      {
+        "ip": 177,
+        "line": 115
+      },
+      {
+        "ip": 182,
+        "line": 117
+      },
+      {
+        "ip": 188,
+        "line": 118
+      }
+    ]
+  },
+  "compiler": {
+    "name": "cashc",
+    "version": "0.12.1"
+  },
+  "updatedAt": "2026-07-04T12:01:35.127Z"
+}

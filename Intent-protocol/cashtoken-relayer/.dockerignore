@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+.env
+.env.*
+*.log
+*.json.bak*
+intents.json
+intents.json.*
+profit-ledger.json
+planet_wallets.json
+balance_result.txt
+test
+docs

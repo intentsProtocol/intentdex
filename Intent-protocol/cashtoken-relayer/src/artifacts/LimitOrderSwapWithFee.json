@@ -1,0 +1,163 @@
+{
+  "contractName": "LimitOrderSwapWithFee",
+  "constructorInputs": [
+    {
+      "name": "makerPkh",
+      "type": "bytes20"
+    },
+    {
+      "name": "feePkh",
+      "type": "bytes20"
+    },
+    {
+      "name": "sellTokenCategory",
+      "type": "bytes"
+    },
+    {
+      "name": "buyTokenCategory",
+      "type": "bytes"
+    },
+    {
+      "name": "sellAmount",
+      "type": "int"
+    },
+    {
+      "name": "buyAmount",
+      "type": "int"
+    },
+    {
+      "name": "feeAmount",
+      "type": "int"
+    },
+    {
+      "name": "expiryTime",
+      "type": "int"
+    }
+  ],
+  "abi": [
+    {
+      "name": "fill",
+      "inputs": [
+        {
+          "name": "resolverPk",
+          "type": "pubkey"
+        },
+        {
+          "name": "resolverSig",
+          "type": "sig"
+        }
+      ]
+    },
+    {
+      "name": "cancel",
+      "inputs": [
+        {
+          "name": "makerPk",
+          "type": "pubkey"
+        },
+        {
+          "name": "makerSig",
+          "type": "sig"
+        }
+      ]
+    }
+  ],
+  "bytecode": "OP_8 OP_PICK OP_0 OP_NUMEQUAL OP_IF OP_10 OP_ROLL OP_10 OP_PICK OP_CHECKSIGVERIFY OP_TXINPUTCOUNT OP_2 OP_NUMEQUALVERIFY OP_TXLOCKTIME OP_DUP 0065cd1d OP_GREATERTHANOREQUAL OP_VERIFY OP_8 OP_ROLL OP_LESSTHAN OP_VERIFY 76a914 OP_SWAP OP_CAT 88ac OP_CAT OP_0 OP_OUTPUTBYTECODE OP_EQUALVERIFY OP_2 OP_PICK OP_0 OP_EQUAL OP_IF OP_0 OP_OUTPUTVALUE OP_5 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ELSE OP_0 OP_OUTPUTTOKENCATEGORY OP_3 OP_PICK OP_EQUALVERIFY OP_0 OP_OUTPUTTOKENAMOUNT OP_5 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_0 OP_OUTPUTVALUE e803 OP_GREATERTHANOREQUAL OP_VERIFY OP_ENDIF OP_7 OP_ROLL OP_HASH160 76a914 OP_SWAP OP_CAT 88ac OP_CAT OP_1 OP_OUTPUTBYTECODE OP_EQUALVERIFY OP_OVER OP_0 OP_EQUAL OP_IF OP_1 OP_OUTPUTVALUE OP_4 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ELSE OP_1 OP_OUTPUTTOKENCATEGORY OP_2 OP_PICK OP_EQUALVERIFY OP_1 OP_OUTPUTTOKENAMOUNT OP_4 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ENDIF 76a914 OP_SWAP OP_CAT 88ac OP_CAT OP_2 OP_OUTPUTBYTECODE OP_EQUALVERIFY OP_OVER OP_0 OP_EQUAL OP_IF OP_2 OP_OUTPUTVALUE OP_5 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ELSE OP_2 OP_OUTPUTTOKENCATEGORY OP_2 OP_PICK OP_EQUALVERIFY OP_2 OP_OUTPUTTOKENAMOUNT OP_5 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_2 OP_OUTPUTVALUE e803 OP_GREATERTHANOREQUAL OP_VERIFY OP_ENDIF OP_2DROP OP_2DROP OP_2DROP OP_1 OP_ELSE OP_8 OP_ROLL OP_1 OP_NUMEQUALVERIFY OP_8 OP_PICK OP_HASH160 OP_EQUALVERIFY OP_8 OP_ROLL OP_8 OP_ROLL OP_CHECKSIGVERIFY OP_6 OP_ROLL OP_CHECKLOCKTIMEVERIFY OP_2DROP OP_2DROP OP_2DROP OP_DROP OP_1 OP_ENDIF",
+  "source": "pragma cashscript ^0.12.0;\n\n// =============================================================================\n// LimitOrderSwapWithFee — Fixed-price Intent with Frontend Monetization\n// =============================================================================\n//\n//   - Output 0: Pays the Maker (user) the exact buy amount\n//   - Output 1: Pays the Solver the sell tokens\n//   - Output 2: Pays the Frontend a fixed fee in the buyToken\n\ncontract LimitOrderSwapWithFee(\n    // Maker's public key hash\n    bytes20 makerPkh,\n    // Frontend's public key hash (recipient of the fee)\n    bytes20 feePkh,\n    // Token category of the sell token (bytes32, 0x for native BCH)\n    bytes sellTokenCategory,\n    // Token category of the buy token (bytes32, 0x for native BCH)\n    bytes buyTokenCategory,\n    // Amount of sell tokens locked\n    int sellAmount,\n    // Fixed buy amount required\n    int buyAmount,\n    // Fixed fee amount (paid in buyToken)\n    int feeAmount,\n    // Expiry time (unix timestamp)\n    int expiryTime\n) {\n    // =========================================================================\n    // fill() — Resolver fills the limit order at the fixed price\n    // =========================================================================\n    function fill(pubkey resolverPk, sig resolverSig) {\n        // Verify resolver's signature\n        require(checkSig(resolverSig, resolverPk));\n\n        // Prevent 3rd-party UTXO drain: requires maker, solver, and fee outputs\n        require(tx.inputs.length == 2);\n\n        int currentTime = tx.locktime;\n        require(currentTime >= 500000000);\n        require(currentTime < expiryTime);\n\n        // --- Output 0: Maker ---\n        bytes25 makerLockingBytecode = new LockingBytecodeP2PKH(makerPkh);\n        require(tx.outputs[0].lockingBytecode == makerLockingBytecode);\n\n        if (buyTokenCategory == 0x) {\n            require(tx.outputs[0].value >= buyAmount);\n        } else {\n            require(tx.outputs[0].tokenCategory == buyTokenCategory);\n            require(tx.outputs[0].tokenAmount >= buyAmount);\n            require(tx.outputs[0].value >= 1000);\n        }\n\n        // --- Output 1: Resolver ---\n        bytes20 resolverPkh = hash160(resolverPk);\n        bytes25 resolverLockingBytecode = new LockingBytecodeP2PKH(resolverPkh);\n        require(tx.outputs[1].lockingBytecode == resolverLockingBytecode);\n\n        if (sellTokenCategory == 0x) {\n            require(tx.outputs[1].value >= sellAmount);\n        } else {\n            require(tx.outputs[1].tokenCategory == sellTokenCategory);\n            require(tx.outputs[1].tokenAmount >= sellAmount);\n        }\n\n        // --- Output 2: Frontend Fee ---\n        bytes25 feeLockingBytecode = new LockingBytecodeP2PKH(feePkh);\n        require(tx.outputs[2].lockingBytecode == feeLockingBytecode);\n\n        if (buyTokenCategory == 0x) {\n            require(tx.outputs[2].value >= feeAmount);\n        } else {\n            require(tx.outputs[2].tokenCategory == buyTokenCategory);\n            require(tx.outputs[2].tokenAmount >= feeAmount);\n            require(tx.outputs[2].value >= 1000);\n        }\n    }\n\n    // =========================================================================\n    // cancel() — Maker cancels and reclaims funds after expiry\n    // =========================================================================\n    function cancel(pubkey makerPk, sig makerSig) {\n        require(hash160(makerPk) == makerPkh);\n        require(checkSig(makerSig, makerPk));\n\n        require(tx.time >= expiryTime);\n    }\n}\n",
+  "debug": {
+    "bytecode": "5879009c635a7a5a79adc3529dc576040065cd1da269587a9f690376a9147c7e0288ac7e00cd88527900876300cc5579a2696700d153798800d35579a26900cc02e803a26968577aa90376a9147c7e0288ac7e51cd887800876351cc5479a2696751d152798851d35479a269680376a9147c7e0288ac7e52cd887800876352cc5579a2696752d152798852d35579a26952cc02e803a269686d6d6d5167587a519d5879a988587a587aad567ab16d6d6d755168",
+    "sourceMap": "32:4:78:5;;;;;34:25:34:36;;:38::48;;:8::51:1;37:16:37:32:0;:36::37;:8::39:1;39:26:39:37:0;40:16:40:27;:31::40;:16:::1;:8::42;41:30:41:40:0;;:16:::1;:8::42;44:39:44:73:0;:64::72;:39::73:1;;;45:27:45:28:0;:16::45:1;:8::71;47:12:47:28:0;;:32::34;:12:::1;:36:49:9:0;48:31:48:32;:20::39:1;:43::52:0;;:20:::1;:12::54;49:15:53:9:0;50:31:50:32;:20::47:1;:51::67:0;;:12::69:1;51:31:51:32:0;:20::45:1;:49::58:0;;:20:::1;:12::60;52:31:52:32:0;:20::39:1;:43::47:0;:20:::1;:12::49;49:15:53:9;56:38:56:48:0;;:30::49:1;57:42:57:79:0;:67::78;:42::79:1;;;58:27:58:28:0;:16::45:1;:8::74;60:12:60:29:0;:33::35;:12:::1;:37:62:9:0;61:31:61:32;:20::39:1;:43::53:0;;:20:::1;:12::55;62:15:65:9:0;63:31:63:32;:20::47:1;:51::68:0;;:12::70:1;64:31:64:32:0;:20::45:1;:49::59:0;;:20:::1;:12::61;62:15:65:9;68:37:68:69:0;:62::68;:37::69:1;;;69:27:69:28:0;:16::45:1;:8::69;71:12:71:28:0;:32::34;:12:::1;:36:73:9:0;72:31:72:32;:20::39:1;:43::52:0;;:20:::1;:12::54;73:15:77:9:0;74:31:74:32;:20::47:1;:51::67:0;;:12::69:1;75:31:75:32:0;:20::45:1;:49::58:0;;:20:::1;:12::60;76:31:76:32:0;:20::39:1;:43::47:0;:20:::1;:12::49;73:15:77:9;32:4:78:5;;;;;83::88::0;;;;84:24:84:31;;:16::32:1;:8::46;85:25:85:33:0;;:35::42;;:8::45:1;87:27:87:37:0;;:8::39:1;83:4:88:5;;;;;11:0:89:1",
+    "logs": [],
+    "requires": [
+      {
+        "ip": 17,
+        "line": 34
+      },
+      {
+        "ip": 20,
+        "line": 37
+      },
+      {
+        "ip": 25,
+        "line": 40
+      },
+      {
+        "ip": 29,
+        "line": 41
+      },
+      {
+        "ip": 37,
+        "line": 45
+      },
+      {
+        "ip": 48,
+        "line": 48
+      },
+      {
+        "ip": 54,
+        "line": 50
+      },
+      {
+        "ip": 60,
+        "line": 51
+      },
+      {
+        "ip": 65,
+        "line": 52
+      },
+      {
+        "ip": 77,
+        "line": 58
+      },
+      {
+        "ip": 87,
+        "line": 61
+      },
+      {
+        "ip": 93,
+        "line": 63
+      },
+      {
+        "ip": 99,
+        "line": 64
+      },
+      {
+        "ip": 108,
+        "line": 69
+      },
+      {
+        "ip": 118,
+        "line": 72
+      },
+      {
+        "ip": 124,
+        "line": 74
+      },
+      {
+        "ip": 130,
+        "line": 75
+      },
+      {
+        "ip": 135,
+        "line": 76
+      },
+      {
+        "ip": 149,
+        "line": 84
+      },
+      {
+        "ip": 154,
+        "line": 85
+      },
+      {
+        "ip": 157,
+        "line": 87
+      }
+    ]
+  },
+  "compiler": {
+    "name": "cashc",
+    "version": "0.12.1"
+  },
+  "updatedAt": "2026-05-07T01:44:53.900Z"
+}

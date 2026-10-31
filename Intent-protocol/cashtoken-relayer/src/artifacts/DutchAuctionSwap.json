@@ -1,0 +1,142 @@
+{
+  "contractName": "DutchAuctionSwap",
+  "constructorInputs": [
+    {
+      "name": "makerPkh",
+      "type": "bytes20"
+    },
+    {
+      "name": "sellTokenCategory",
+      "type": "bytes"
+    },
+    {
+      "name": "buyTokenCategory",
+      "type": "bytes"
+    },
+    {
+      "name": "sellAmount",
+      "type": "int"
+    },
+    {
+      "name": "startBuyAmount",
+      "type": "int"
+    },
+    {
+      "name": "endBuyAmount",
+      "type": "int"
+    },
+    {
+      "name": "startTime",
+      "type": "int"
+    },
+    {
+      "name": "duration",
+      "type": "int"
+    }
+  ],
+  "abi": [
+    {
+      "name": "fill",
+      "inputs": [
+        {
+          "name": "resolverPk",
+          "type": "pubkey"
+        },
+        {
+          "name": "resolverSig",
+          "type": "sig"
+        }
+      ]
+    },
+    {
+      "name": "cancel",
+      "inputs": []
+    }
+  ],
+  "bytecode": "OP_8 OP_PICK OP_0 OP_NUMEQUAL OP_IF OP_10 OP_ROLL OP_10 OP_PICK OP_CHECKSIGVERIFY OP_TXINPUTCOUNT OP_2 OP_NUMEQUALVERIFY OP_TXLOCKTIME OP_DUP 0065cd1d OP_GREATERTHANOREQUAL OP_VERIFY OP_DUP OP_8 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_7 OP_ROLL OP_SUB OP_7 OP_PICK OP_MIN OP_5 OP_PICK OP_7 OP_ROLL OP_SUB OP_SWAP OP_MUL OP_6 OP_ROLL OP_DIV OP_5 OP_ROLL OP_SWAP OP_SUB 76a914 OP_ROT OP_CAT 88ac OP_CAT OP_0 OP_OUTPUTBYTECODE OP_EQUALVERIFY OP_2 OP_PICK OP_0 OP_EQUAL OP_IF OP_0 OP_OUTPUTVALUE OP_OVER OP_GREATERTHANOREQUAL OP_VERIFY OP_ELSE OP_0 OP_OUTPUTTOKENCATEGORY OP_3 OP_PICK OP_EQUALVERIFY OP_0 OP_OUTPUTTOKENAMOUNT OP_OVER OP_GREATERTHANOREQUAL OP_VERIFY OP_0 OP_OUTPUTVALUE e803 OP_GREATERTHANOREQUAL OP_VERIFY OP_ENDIF OP_5 OP_ROLL OP_HASH160 76a914 OP_SWAP OP_CAT 88ac OP_CAT OP_1 OP_OUTPUTBYTECODE OP_EQUALVERIFY OP_OVER OP_0 OP_EQUAL OP_IF OP_1 OP_OUTPUTVALUE OP_4 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ELSE OP_1 OP_OUTPUTTOKENCATEGORY OP_2 OP_PICK OP_EQUALVERIFY OP_1 OP_OUTPUTTOKENAMOUNT OP_4 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ENDIF OP_2DROP OP_2DROP OP_DROP OP_1 OP_ELSE OP_8 OP_ROLL OP_1 OP_NUMEQUALVERIFY OP_6 OP_ROLL OP_7 OP_ROLL OP_ADD OP_CHECKLOCKTIMEVERIFY OP_DROP 76a914 OP_SWAP OP_CAT 88ac OP_CAT OP_0 OP_OUTPUTBYTECODE OP_EQUALVERIFY OP_DUP OP_0 OP_EQUAL OP_IF OP_0 OP_OUTPUTVALUE OP_3 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ELSE OP_0 OP_OUTPUTTOKENCATEGORY OP_OVER OP_EQUALVERIFY OP_0 OP_OUTPUTTOKENAMOUNT OP_3 OP_PICK OP_GREATERTHANOREQUAL OP_VERIFY OP_ENDIF OP_2DROP OP_2DROP OP_DROP OP_1 OP_ENDIF",
+  "source": "pragma cashscript ^0.12.0;\r\n\r\n// =============================================================================\r\n// DutchAuctionSwap — Same-chain CashToken intent swap with Dutch Auction pricing\r\n// =============================================================================\r\n//\r\n//   - User (maker) locks sell-tokens in this covenant\r\n//   - Resolver fills the order by providing buy-tokens at the current auction price\r\n//   - Price decays linearly from `startBuyAmount` down to `endBuyAmount` over time\r\n//\r\n// Constructor params are baked into the contract address (like Move constructor args).\r\n\r\ncontract DutchAuctionSwap(\r\n    // Maker's public key hash (recipient of buy-tokens)\r\n    bytes20 makerPkh,\r\n    // Token category of the sell token (bytes32, 0x for native BCH)\r\n    bytes sellTokenCategory,\r\n    // Token category of the buy token (bytes32, 0x for native BCH)\r\n    bytes buyTokenCategory,\r\n    // Amount of sell tokens locked in this covenant\r\n    int sellAmount,\r\n    // Dutch Auction: starting (maximum) buy price\r\n    int startBuyAmount,\r\n    // Dutch Auction: ending (minimum) buy price\r\n    int endBuyAmount,\r\n    // Unix timestamp when auction starts\r\n    int startTime,\r\n    // Duration of the auction in seconds\r\n    int duration\r\n) {\r\n    // =========================================================================\r\n    // fill() — Resolver fills the order at the current Dutch Auction price\r\n    // =========================================================================\r\n    //\r\n    // The resolver must construct a transaction where:\r\n    //   Output 0: Sends >= currentPrice of buyToken to the maker\r\n    //   Output 1: Sends sellAmount of sellToken to the resolver\r\n    //\r\n    function fill(pubkey resolverPk, sig resolverSig) {\r\n        // Verify resolver's signature\r\n        require(checkSig(resolverSig, resolverPk));\r\n\r\n        // Prevent 3rd-party UTXO drain: only covenant + resolver inputs allowed\r\n        require(tx.inputs.length == 2);\r\n\r\n        // --- Dutch Auction Price Calculation ---\r\n        // Use tx.locktime as the \"current time\" for the auction\r\n        int currentTime = tx.locktime;\r\n\r\n        // Enforce unix timestamp interpretation (not block number)\r\n        require(currentTime >= 500000000);\r\n\r\n        // Must be after auction start\r\n        require(currentTime >= startTime);\r\n\r\n        // Calculate current price using linear decay\r\n        // Linear decay: price = start - (start - end) * min(elapsed, duration) / duration\r\n        // Using min() ensures we clamp at endBuyAmount after auction ends\r\n        int elapsed = currentTime - startTime;\r\n        int clampedElapsed = min(elapsed, duration);\r\n        int priceDrop = startBuyAmount - endBuyAmount;\r\n        int dropAmount = (priceDrop * clampedElapsed) / duration;\r\n        int currentPrice = startBuyAmount - dropAmount;\r\n\r\n        // --- Covenant: Enforce output constraints ---\r\n\r\n        // Output 0: Must send >= currentPrice to the maker\r\n        bytes25 makerLockingBytecode = new LockingBytecodeP2PKH(makerPkh);\r\n        require(tx.outputs[0].lockingBytecode == makerLockingBytecode);\r\n\r\n        // Check if buy token is native BCH or a CashToken\r\n        if (buyTokenCategory == 0x) {\r\n            // Native BCH: check satoshi value\r\n            require(tx.outputs[0].value >= currentPrice);\r\n        } else {\r\n            // CashToken: check token category and amount\r\n            require(tx.outputs[0].tokenCategory == buyTokenCategory);\r\n            require(tx.outputs[0].tokenAmount >= currentPrice);\r\n            // Must have dust amount of BCH too\r\n            require(tx.outputs[0].value >= 1000);\r\n        }\r\n\r\n        // Output 1: Must send sell tokens to the resolver\r\n        bytes20 resolverPkh = hash160(resolverPk);\r\n        bytes25 resolverLockingBytecode = new LockingBytecodeP2PKH(resolverPkh);\r\n        require(tx.outputs[1].lockingBytecode == resolverLockingBytecode);\r\n\r\n        if (sellTokenCategory == 0x) {\r\n            // Native BCH\r\n            require(tx.outputs[1].value >= sellAmount);\r\n        } else {\r\n            // CashToken\r\n            require(tx.outputs[1].tokenCategory == sellTokenCategory);\r\n            require(tx.outputs[1].tokenAmount >= sellAmount);\r\n        }\r\n    }\r\n\r\n    // =========================================================================\r\n    // cancel() — Trustless refund: Anyone can trigger after auction ends to refund maker\r\n    // =========================================================================\r\n    function cancel() {\r\n        // Can only cancel after the auction duration has fully elapsed\r\n        int endTime = startTime + duration;\r\n        require(tx.time >= endTime);\r\n\r\n        // Output 0: Must send locked funds back to the maker\r\n        bytes25 makerLockingBytecode = new LockingBytecodeP2PKH(makerPkh);\r\n        require(tx.outputs[0].lockingBytecode == makerLockingBytecode);\r\n\r\n        if (sellTokenCategory == 0x) {\r\n            require(tx.outputs[0].value >= sellAmount);\r\n        } else {\r\n            require(tx.outputs[0].tokenCategory == sellTokenCategory);\r\n            require(tx.outputs[0].tokenAmount >= sellAmount);\r\n        }\r\n    }\r\n}\r\n",
+  "debug": {
+    "bytecode": "5879009c635a7a5a79adc3529dc576040065cd1da269765879a269577a945779a35579577a947c95567a96557a7c940376a9147b7e0288ac7e00cd88527900876300cc78a2696700d153798800d378a26900cc02e803a26968557aa90376a9147c7e0288ac7e51cd887800876351cc5479a2696751d152798851d35479a269686d6d755167587a519d567a577a93b1750376a9147c7e0288ac7e00cd887600876300cc5379a2696700d1788800d35379a269686d6d755168",
+    "sourceMap": "39:4:96:5;;;;;41:25:41:36;;:38::48;;:8::51:1;44:16:44:32:0;:36::37;:8::39:1;48:26:48:37:0;51:16:51:27;:31::40;:16:::1;:8::42;54:16:54:27:0;:31::40;;:16:::1;:8::42;59:36:59:45:0;;:22:::1;60:42:60:50:0;;:29::51:1;61:24:61:38:0;;:41::53;;:24:::1;62:38:62:52:0;:26:::1;:56::64:0;;:25:::1;63:27:63:41:0;;:44::54;:27:::1;68:39:68:73:0;:64::72;:39::73:1;;;69:27:69:28:0;:16::45:1;:8::71;72:12:72:28:0;;:32::34;:12:::1;:36:75:9:0;74:31:74:32;:20::39:1;:43::55:0;:20:::1;:12::57;75:15:81:9:0;77:31:77:32;:20::47:1;:51::67:0;;:12::69:1;78:31:78:32:0;:20::45:1;:49::61:0;:20:::1;:12::63;80:31:80:32:0;:20::39:1;:43::47:0;:20:::1;:12::49;75:15:81:9;84:38:84:48:0;;:30::49:1;85:42:85:79:0;:67::78;:42::79:1;;;86:27:86:28:0;:16::45:1;:8::74;88:12:88:29:0;:33::35;:12:::1;:37:91:9:0;90:31:90:32;:20::39:1;:43::53:0;;:20:::1;:12::55;91:15:95:9:0;93:31:93:32;:20::47:1;:51::68:0;;:12::70:1;94:31:94:32:0;:20::45:1;:49::59:0;;:20:::1;:12::61;91:15:95:9;39:4:96:5;;;;;101::116::0;;;;103:22:103:31;;:34::42;;:22:::1;104:8:104:36;;107:39:107:73:0;:64::72;:39::73:1;;;108:27:108:28:0;:16::45:1;:8::71;110:12:110:29:0;:33::35;:12:::1;:37:112:9:0;111:31:111:32;:20::39:1;:43::53:0;;:20:::1;:12::55;112:15:115:9:0;113:31:113:32;:20::47:1;:51::68:0;:12::70:1;114:31:114:32:0;:20::45:1;:49::59:0;;:20:::1;:12::61;112:15:115:9;101:4:116:5;;;;13:0:117:1",
+    "logs": [],
+    "requires": [
+      {
+        "ip": 17,
+        "line": 41
+      },
+      {
+        "ip": 20,
+        "line": 44
+      },
+      {
+        "ip": 25,
+        "line": 51
+      },
+      {
+        "ip": 30,
+        "line": 54
+      },
+      {
+        "ip": 58,
+        "line": 69
+      },
+      {
+        "ip": 68,
+        "line": 74
+      },
+      {
+        "ip": 74,
+        "line": 77
+      },
+      {
+        "ip": 79,
+        "line": 78
+      },
+      {
+        "ip": 84,
+        "line": 80
+      },
+      {
+        "ip": 96,
+        "line": 86
+      },
+      {
+        "ip": 106,
+        "line": 90
+      },
+      {
+        "ip": 112,
+        "line": 93
+      },
+      {
+        "ip": 118,
+        "line": 94
+      },
+      {
+        "ip": 134,
+        "line": 104
+      },
+      {
+        "ip": 143,
+        "line": 108
+      },
+      {
+        "ip": 153,
+        "line": 111
+      },
+      {
+        "ip": 158,
+        "line": 113
+      },
+      {
+        "ip": 164,
+        "line": 114
+      }
+    ]
+  },
+  "compiler": {
+    "name": "cashc",
+    "version": "0.12.1"
+  },
+  "updatedAt": "2026-05-17T10:20:48.983Z"
+}
