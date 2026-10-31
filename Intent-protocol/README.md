@@ -8,6 +8,8 @@ Built for the **AI Yako: Own Your AI** Hackathon (Tether × Node NBO Nairobi)
 ---
 
 > ### 📢 Note for Hackathon Judges
+> **Full Commit History & Chronological Timeline:** See [**DEVELOPMENT_HISTORY.md**](./DEVELOPMENT_HISTORY.md) for the complete, authentic 89-commit development timeline across all modules.
+>
 > **Primary Evaluation Target:** Please focus your evaluation primarily on **`bch-intents-wallet-app`** (our React Native mobile app powered by **QVAC** on-device AI and **WDK**) alongside **`wdk-wallet-bch`** (the Bitcoin Cash & CashTokens WDK wallet module).
 > 
 > These represent the core breakthrough engineered during the AI Yako hackathon: enabling users to plan complex multi-bin liquidity strategies, Bitcoin collateralized loans, and cross-chain swaps **100% offline in Airplane Mode**, and then safely sign and broadcast on-chain via WDK upon reconnecting.
