@@ -1,0 +1,260 @@
+/*
+ * Morphic theme tokens. Every colour a screen uses comes from here through the MX object in primitives.tsx,
+ * so a screen never needs to know which theme is active.
+ *
+ * data-theme on <html> is 'dark' or 'light' (the 'system' preference is resolved in lib/theme.tsx).
+ * data-surface on <html> is 'panel' (docked side panel), 'popup' (360×600 action popup) or 'tab' (onboarding).
+ */
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --mx-primary: hsl(161, 100%, 41%);
+  --mx-primary-strong: hsl(161, 100%, 35%);
+  --mx-on-primary: #03130a;
+  --mx-primary-dim: hsla(161, 100%, 41%, 0.12);
+  --mx-primary-border: hsla(161, 100%, 41%, 0.3);
+  --mx-primary-soft: hsla(161, 100%, 41%, 0.06);
+  --mx-primary-glow: 0 0 60px -15px hsla(161, 100%, 41%, 0.5);
+
+  --mx-bg0: hsl(240, 10%, 3.9%);
+  --mx-bg1: hsl(240, 6%, 9%);
+  --mx-bg2: hsl(240, 5%, 14%);
+  --mx-bg3: hsl(240, 5%, 18%);
+
+  --mx-fg: hsl(0, 0%, 98%);
+  --mx-fg-mute: hsl(240, 5%, 64.9%);
+  --mx-fg-faint: hsl(240, 5%, 44%);
+
+  --mx-border: hsla(0, 0%, 100%, 0.06);
+  --mx-border-strong: hsla(0, 0%, 100%, 0.1);
+
+  --mx-surface: hsla(0, 0%, 100%, 0.03);
+  --mx-surface-2: hsla(0, 0%, 100%, 0.06);
+
+  /* liquid glass */
+  --mx-glass: hsla(240, 8%, 11%, 0.55);
+  --mx-glass-strong: hsla(240, 8%, 9%, 0.78);
+  --mx-glass-border: hsla(0, 0%, 100%, 0.09);
+  --mx-glass-hi: hsla(0, 0%, 100%, 0.1);
+  --mx-shadow: rgba(0, 0, 0, 0.6);
+  --mx-scrim: rgba(0, 0, 0, 0.55);
+
+  --mx-amber: #fbbf24;
+  --mx-amber-dim: hsla(43, 96%, 56%, 0.12);
+  --mx-amber-border: hsla(43, 96%, 56%, 0.25);
+  --mx-red: #ef4444;
+  --mx-red-dim: hsla(0, 84%, 60%, 0.12);
+  --mx-red-border: hsla(0, 84%, 60%, 0.25);
+
+  --mx-c-bch: hsl(161, 100%, 41%);
+  --mx-c-eth: #60a5fa;
+  --mx-c-sol: #a78bfa;
+  --mx-c-btc: #fb923c;
+  --mx-c-bnb: #facc15;
+  --mx-c-usdc: #4f9cf9;
+
+  --mx-mesh-a: hsla(161, 100%, 41%, 0.12);
+  --mx-mesh-b: hsla(258, 90%, 66%, 0.06);
+  --mx-noise-opacity: 0.05;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --mx-primary: hsl(161, 100%, 27%);
+  --mx-primary-strong: hsl(161, 100%, 24%);
+  --mx-on-primary: #ffffff;
+  --mx-primary-dim: hsla(161, 100%, 30%, 0.1);
+  --mx-primary-border: hsla(161, 100%, 30%, 0.32);
+  --mx-primary-soft: hsla(161, 100%, 30%, 0.05);
+  --mx-primary-glow: 0 12px 40px -18px hsla(161, 100%, 30%, 0.45);
+
+  --mx-bg0: hsl(150, 14%, 96%);
+  --mx-bg1: hsl(0, 0%, 100%);
+  --mx-bg2: hsl(150, 8%, 93%);
+  --mx-bg3: hsl(150, 8%, 88%);
+
+  --mx-fg: hsl(240, 12%, 9%);
+  --mx-fg-mute: hsl(240, 5%, 38%);
+  --mx-fg-faint: hsl(240, 4%, 54%);
+
+  --mx-border: hsla(240, 12%, 10%, 0.08);
+  --mx-border-strong: hsla(240, 12%, 10%, 0.14);
+
+  --mx-surface: hsla(240, 12%, 10%, 0.03);
+  --mx-surface-2: hsla(240, 12%, 10%, 0.06);
+
+  --mx-glass: hsla(0, 0%, 100%, 0.62);
+  --mx-glass-strong: hsla(0, 0%, 100%, 0.86);
+  --mx-glass-border: hsla(240, 12%, 10%, 0.08);
+  --mx-glass-hi: hsla(0, 0%, 100%, 0.9);
+  --mx-shadow: rgba(20, 40, 30, 0.18);
+  --mx-scrim: rgba(15, 25, 20, 0.35);
+
+  --mx-amber: #b45309;
+  --mx-amber-dim: hsla(35, 92%, 45%, 0.1);
+  --mx-amber-border: hsla(35, 92%, 40%, 0.3);
+  --mx-red: #dc2626;
+  --mx-red-dim: hsla(0, 72%, 51%, 0.08);
+  --mx-red-border: hsla(0, 72%, 51%, 0.28);
+
+  --mx-c-bch: hsl(161, 100%, 27%);
+  --mx-c-eth: #2563eb;
+  --mx-c-sol: #7c3aed;
+  --mx-c-btc: #ea580c;
+  --mx-c-bnb: #a16207;
+  --mx-c-usdc: #2563eb;
+
+  --mx-mesh-a: hsla(161, 100%, 41%, 0.16);
+  --mx-mesh-b: hsla(258, 90%, 66%, 0.1);
+  --mx-noise-opacity: 0.025;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+html,
+body {
+  background: var(--mx-bg0);
+  color: var(--mx-fg);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  overflow: hidden;
+}
+
+/* The action popup is the only surface with a fixed size; Chrome sizes the popup window from the body. */
+html[data-surface='popup'] body,
+html[data-surface='popup'] #root {
+  width: 360px;
+  height: 600px;
+}
+
+html[data-surface='panel'] body,
+html[data-surface='panel'] #root {
+  width: 100vw;
+  height: 100vh;
+  min-width: 320px;
+}
+
+html[data-surface='tab'] body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 60vw 50vh at 15% 0%, var(--mx-mesh-a), transparent 60%),
+    radial-gradient(ellipse 60vw 50vh at 100% 100%, var(--mx-mesh-b), transparent 60%),
+    var(--mx-bg0);
+}
+
+html[data-surface='tab'] #root {
+  width: min(420px, 100vw);
+  height: min(720px, 100vh);
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid var(--mx-glass-border);
+  box-shadow: 0 40px 120px -40px var(--mx-shadow), inset 0 1px 0 var(--mx-glass-hi);
+}
+
+#root {
+  overflow: hidden;
+  position: relative;
+}
+
+button {
+  font-family: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--mx-primary);
+  outline-offset: 2px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--mx-fg-faint);
+}
+
+/* thin, theme-aware scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--mx-border-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--mx-border-strong);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-y {
+  overflow-y: auto;
+}
+
+.mx-press {
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+.mx-press:hover:not(:disabled) {
+  background: var(--mx-surface-2);
+}
+.mx-press:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+@keyframes mxping {
+  0% { transform: scale(1); opacity: 0.7; }
+  80%, 100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes mxspin {
+  to { transform: rotate(360deg); }
+}
+@keyframes mxfade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes mxslideDown {
+  from { transform: translateY(-12%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes mxslideUp {
+  from { transform: translateY(8%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes mxpop {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes mxshimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+@keyframes mxshake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

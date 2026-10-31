@@ -1,0 +1,153 @@
+{
+  "description": "Mesh V4 position NFT commitment v1 vectors. tokenCat in display order; indexes are signed; `hex` is the NFT commitment.",
+  "commitmentLength": 82,
+  "parseBytecode": "00cf517f7c6b517f7c6b01207f7c6b527f7c816b547f7c816b547f7c816b527f7c816b01207f7c6b816b",
+  "vectors": [
+    {
+      "name": "curve-default-no-manager",
+      "fields": {
+        "version": 1,
+        "shape": "curve",
+        "variant": "default",
+        "tokenCat": "dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b",
+        "binStepBps": 100,
+        "lowIndex": 760,
+        "highIndex": 762,
+        "binCount": 3,
+        "managerHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "createdHeight": 900000
+      },
+      "hex": "0101dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b6400f8020000fa02000003000000000000000000000000000000000000000000000000000000000000000000a0bb0d00"
+    },
+    {
+      "name": "spot-with-manager",
+      "fields": {
+        "version": 1,
+        "shape": "spot",
+        "variant": "default",
+        "tokenCat": "dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b",
+        "binStepBps": 100,
+        "lowIndex": 750,
+        "highIndex": 770,
+        "binCount": 21,
+        "managerHash": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+        "createdHeight": 900000
+      },
+      "hex": "0100dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b6400ee020000020300001500cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcda0bb0d00"
+    },
+    {
+      "name": "bidask-negative-indexes",
+      "fields": {
+        "version": 1,
+        "shape": "bidAsk",
+        "variant": "default",
+        "tokenCat": "dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b",
+        "binStepBps": 10,
+        "lowIndex": -1852,
+        "highIndex": -1,
+        "binCount": 1852,
+        "managerHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "createdHeight": 900000
+      },
+      "hex": "0102dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b0a003c070080010000803c070000000000000000000000000000000000000000000000000000000000000000a0bb0d00"
+    },
+    {
+      "name": "custom-sizefee-extremes",
+      "fields": {
+        "version": 1,
+        "shape": "custom",
+        "variant": "sizeFee",
+        "tokenCat": "dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b",
+        "binStepBps": 10000,
+        "lowIndex": -2147483647,
+        "highIndex": 2147483647,
+        "binCount": 32767,
+        "managerHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "createdHeight": 499999999
+      },
+      "hex": "0123dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b1027ffffffffffffff7fff7f0000000000000000000000000000000000000000000000000000000000000000ff64cd1d"
+    },
+    {
+      "name": "vesting",
+      "fields": {
+        "version": 1,
+        "shape": "curve",
+        "variant": "vesting",
+        "tokenCat": "dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b",
+        "binStepBps": 100,
+        "lowIndex": 760,
+        "highIndex": 762,
+        "binCount": 3,
+        "managerHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "createdHeight": 900000
+      },
+      "hex": "0111dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b6400f8020000fa02000003000000000000000000000000000000000000000000000000000000000000000000a0bb0d00"
+    },
+    {
+      "name": "locked",
+      "fields": {
+        "version": 1,
+        "shape": "curve",
+        "variant": "locked",
+        "tokenCat": "dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b",
+        "binStepBps": 100,
+        "lowIndex": 760,
+        "highIndex": 762,
+        "binCount": 3,
+        "managerHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "createdHeight": 900000
+      },
+      "hex": "0109dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b6400f8020000fa02000003000000000000000000000000000000000000000000000000000000000000000000a0bb0d00"
+    },
+    {
+      "name": "fee-schedule",
+      "fields": {
+        "version": 1,
+        "shape": "curve",
+        "variant": "feeSchedule",
+        "tokenCat": "dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b",
+        "binStepBps": 100,
+        "lowIndex": 760,
+        "highIndex": 762,
+        "binCount": 3,
+        "managerHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "createdHeight": 900000
+      },
+      "hex": "0119dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b6400f8020000fa02000003000000000000000000000000000000000000000000000000000000000000000000a0bb0d00"
+    }
+  ],
+  "invalid": [
+    {
+      "name": "empty",
+      "hex": ""
+    },
+    {
+      "name": "one byte short",
+      "hex": "0101dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b6400f8020000fa02000003000000000000000000000000000000000000000000000000000000000000000000a0bb0d"
+    },
+    {
+      "name": "version 2",
+      "hex": "0201dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b6400f8020000fa02000003000000000000000000000000000000000000000000000000000000000000000000a0bb0d00"
+    },
+    {
+      "name": "reserved flag bits",
+      "hex": "01c1dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b6400f8020000fa02000003000000000000000000000000000000000000000000000000000000000000000000a0bb0d00"
+    },
+    {
+      "name": "unknown shape",
+      "hex": "0107dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b6400f8020000fa02000003000000000000000000000000000000000000000000000000000000000000000000a0bb0d00"
+    },
+    {
+      "name": "unknown variant",
+      "hex": "0139dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b6400f8020000fa02000003000000000000000000000000000000000000000000000000000000000000000000a0bb0d00"
+    },
+    {
+      "name": "bin step 0",
+      "hex": "0101dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b0000f8020000fa02000003000000000000000000000000000000000000000000000000000000000000000000a0bb0d00"
+    },
+    {
+      "name": "bin count 0",
+      "hex": "0101dfe50223c8d5cba8dcef8dff6d92b61deb88a8ba44947367f2b746487b56039b6400f8020000fa02000000000000000000000000000000000000000000000000000000000000000000000000a0bb0d00"
+    }
+  ]
+}

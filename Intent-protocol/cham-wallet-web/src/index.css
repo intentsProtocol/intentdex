@@ -1,0 +1,281 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Emerald Green Default Theme */
+    --primary: 161 100% 41%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 161 100% 41%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+
+    --radius: 0.75rem;
+
+    /* Dynamic Cham Tone */
+    --cham-tone: #10b981;
+    --cham-tone-rgb: 16, 185, 129;
+    --lg-tint: var(--cham-tone);
+  }
+
+  * {
+    @apply border-border;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    background-color: #050505;
+  }
+
+  body {
+    background-color: #050505;
+    color: hsl(var(--foreground));
+    font-family: 'Inter', sans-serif;
+    overscroll-behavior-y: none;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* ============================================================
+   MORPHIC DESIGN SYSTEM UTILITIES
+   ============================================================ */
+@layer utilities {
+  .grainy {
+    position: relative;
+  }
+
+  .grainy::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    border-radius: inherit;
+  }
+
+  .grainy-strong::before {
+    opacity: 0.1;
+  }
+
+  /* Glass Surfaces */
+  .glass {
+    background: rgba(16, 16, 20, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-subtle {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .glass-solid {
+    background: #0d0d11;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Bento Cards */
+  .bento-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(13, 13, 17, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bento-card:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+  }
+
+  .bento-card-interactive {
+    @apply bento-card cursor-pointer;
+  }
+
+  .bento-card-interactive:hover {
+    transform: translateY(-4px) scale(1.015);
+  }
+
+  /* Mesh Gradients */
+  .mesh-gradient-primary {
+    background:
+      radial-gradient(ellipse at 20% 80%, color-mix(in srgb, var(--cham-tone, #10b981) 22%, transparent) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, color-mix(in srgb, var(--cham-tone, #10b981) 15%, transparent) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(13, 13, 17, 0.4) 0%, transparent 70%);
+  }
+
+  .mesh-gradient-teal {
+    background:
+      radial-gradient(ellipse at 70% 70%, rgba(45, 212, 191, 0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 30% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
+  }
+
+  .mesh-gradient-blue {
+    background:
+      radial-gradient(ellipse at 60% 40%, rgba(56, 189, 248, 0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 40% 60%, rgba(167, 139, 250, 0.15) 0%, transparent 50%);
+  }
+}
+
+/* ============================================================
+   LIQUID GLASS (Cham Signature Surfaces)
+   ============================================================ */
+@layer components {
+  .lg-panel {
+    background: linear-gradient(180deg, hsla(240, 10%, 13%, 0.76) 0%, hsla(240, 10%, 6%, 0.90) 100%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid hsla(0, 0%, 100%, 0.09);
+    box-shadow:
+      inset 0 1px 0 hsla(0, 0%, 100%, 0.12),
+      0 30px 80px -28px rgba(0, 0, 0, 0.85),
+      0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  }
+
+  .lg-card {
+    position: relative;
+    isolation: isolate;
+    background:
+      radial-gradient(130% 100% at 0% 0%, color-mix(in srgb, var(--lg-tint, #10b981) 18%, transparent) 0%, transparent 58%),
+      radial-gradient(90% 80% at 100% 100%, color-mix(in srgb, var(--lg-tint, #10b981) 8%, transparent) 0%, transparent 60%),
+      linear-gradient(180deg, hsla(0, 0%, 100%, 0.07), hsla(0, 0%, 100%, 0.025));
+    border: 1px solid hsla(0, 0%, 100%, 0.1);
+    box-shadow:
+      inset 0 1px 0 hsla(0, 0%, 100%, 0.16),
+      inset 0 -1px 0 hsla(0, 0%, 0%, 0.25),
+      0 18px 40px -26px color-mix(in srgb, var(--lg-tint, #10b981) 60%, transparent);
+  }
+
+  .lg-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(115deg, hsla(0, 0%, 100%, 0.09) 0%, transparent 32%, transparent 70%, hsla(0, 0%, 100%, 0.03) 100%);
+  }
+
+  .lg-well {
+    background: hsla(0, 0%, 100%, 0.035);
+    border: 1px solid hsla(0, 0%, 100%, 0.06);
+    box-shadow: inset 0 1px 0 hsla(0, 0%, 100%, 0.04);
+  }
+
+  .lg-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: hsla(0, 0%, 100%, 0.12) transparent;
+  }
+
+  .lg-scroll::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .lg-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .lg-scroll::-webkit-scrollbar-thumb {
+    background: hsla(0, 0%, 100%, 0.12);
+    border-radius: 3px;
+  }
+}
+
+/* ============================================================
+   CHAM MASCOT KEYFRAMES
+   ============================================================ */
+@keyframes cham-breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.5px); }
+}
+
+@keyframes cham-tongue {
+  0% { transform: scaleX(0); }
+  35% { transform: scaleX(1); }
+  55% { transform: scaleX(1); }
+  100% { transform: scaleX(0); }
+}
+
+@keyframes cham-blink {
+  0%, 92%, 100% { transform: scaleY(0); }
+  95%, 97% { transform: scaleY(1); }
+}
+
+@keyframes cham-tail {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes cham-sway {
+  0%, 100% { transform: rotate(-1.2deg); }
+  50% { transform: rotate(1.2deg); }
+}
+
+@keyframes cham-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cham, .cham *, .animate-pulse-glow {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "cli": {
+    "version": ">= 13.2.0",
+    "appVersionSource": "remote",
+    "promptToConfigurePushNotifications": false
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug -PreactNativeArchitectures=arm64-v8a",
+        "withoutCredentials": true
+      },
+      "node": "24.11.1",
+      "env": {
+        "EXPO_PUBLIC_SWAP_SERVER_TESTNET": "https://cctp-swap-server-production.up.railway.app",
+        "EXPO_PUBLIC_SWAP_SERVER_MAINNET": "https://cctp-swap-server-production.up.railway.app",
+        "EXPO_PUBLIC_CASHTOKEN_RELAYER": "https://meshserver-production.up.railway.app",
+        "EXPO_PUBLIC_PRICE_FEED": "https://meshserver-production.up.railway.app"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SWAP_SERVER_TESTNET": "https://cctp-swap-server-production.up.railway.app",
+        "EXPO_PUBLIC_SWAP_SERVER_MAINNET": "https://cctp-swap-server-production.up.railway.app",
+        "EXPO_PUBLIC_CASHTOKEN_RELAYER": "https://meshserver-production.up.railway.app",
+        "EXPO_PUBLIC_PRICE_FEED": "https://meshserver-production.up.railway.app"
+      },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease -PreactNativeArchitectures=arm64-v8a",
+        "withoutCredentials": true
+      },
+      "ios": {
+        "simulator": false
+      },
+      "node": "24.11.1"
+    },
+    "production": {
+      "autoIncrement": true,
+      "android": {
+        "buildType": "app-bundle",
+        "gradleCommand": ":app:bundleRelease -PreactNativeArchitectures=arm64-v8a"
+      },
+      "node": "24.11.1"
+    }
+  }
+}

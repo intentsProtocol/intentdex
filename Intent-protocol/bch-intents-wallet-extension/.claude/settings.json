@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "ClaudeInChromeDomain(app.liquidium.fi)",
+      "ClaudeInChromeDomain(dorahacks.io)"
+    ]
+  }
+}

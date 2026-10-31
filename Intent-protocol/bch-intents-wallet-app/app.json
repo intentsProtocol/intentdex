@@ -1,0 +1,115 @@
+{
+  "expo": {
+    "name": "BCH Intents Wallet",
+    "slug": "bch-intents-wallet",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "bchintents",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "cash.bchintents.wallet",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Face ID unlocks your wallet and confirms transactions.",
+        "NSCameraUsageDescription": "The camera scans QR codes: addresses to pay and apps to connect.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0B1F17",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "cash.bchintents.wallet",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.USE_BIOMETRIC"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "splash": {
+      "image": "./assets/images/splash-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B1F17"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-logo.png",
+          "imageWidth": 160,
+          "resizeMode": "contain",
+          "backgroundColor": "#0B1F17"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 29,
+            "compileSdkVersion": 36,
+            "buildToolsVersion": "36.0.0",
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "extraProguardRules": "-dontwarn com.google.j2objc.annotations.ReflectionSupport\n-dontwarn com.google.j2objc.annotations.RetainedWith\n-dontwarn java.awt.Component",
+            "enableMinifyInReleaseBuilds": true,
+            "ndkVersion": "29.0.14206865"
+          }
+        }
+      ],
+      "./plugins/withCiBuildHardening.js",
+      [
+        "./plugins/withWorkletAddons.js",
+        {
+          "installMissingPrebuilds": false
+        }
+      ],
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Face ID unlocks your wallet and confirms transactions."
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Face ID unlocks your wallet and confirms transactions."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "The camera scans QR codes: addresses to pay and apps to connect.",
+          "recordAudioAndroid": false
+        }
+      ],
+      "expo-localization",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/android-icon-monochrome.png",
+          "color": "#00D18F"
+        }
+      ],
+      "expo-background-task"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    },
+    "extra": {
+      "eas": {
+        "projectId": "39ea5d10-3861-46bc-8fc2-eff8eaa50f63"
+      },
+      "router": {}
+    },
+    "owner": "antonyd3v"
+  }
+}

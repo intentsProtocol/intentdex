@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Cham Wallet extension">
+  <rect width="64" height="64" rx="16" fill="#171204"/>
+  <g transform="translate(3 9) scale(0.29)" fill="none" stroke-linecap="round">
+    <path d="M8 128 C 60 120, 140 124, 194 112" stroke="#8b8b94" stroke-width="7" opacity="0.6"/>
+    <path d="M62 100 C 44 122, 14 110, 20 90 C 24 76, 46 76, 46 92 C 46 102, 34 104, 32 96" stroke="#fbbf24" stroke-width="10"/>
+    <path d="M56 104 C 52 70, 86 46, 122 54 C 140 58, 150 74, 146 92 C 142 110, 112 118, 84 116 C 70 115, 58 112, 56 104 Z" fill="#fbbf24"/>
+    <path d="M66 106 C 80 114, 118 114, 140 98 C 132 112, 108 118, 84 116 C 74 115, 68 112, 66 106 Z" fill="#fff6d6" opacity="0.85"/>
+    <path d="M82 66 C 78 82, 80 98, 86 110 M100 60 C 96 78, 98 96, 104 112" stroke="#78500a" stroke-width="4" opacity="0.45"/>
+    <path d="M82 112 C 80 120, 78 124, 74 127 M88 113 C 88 121, 90 125, 94 127 M122 110 C 122 117, 120 121, 116 124 M128 108 C 130 115, 133 119, 137 121" stroke="#78500a" stroke-width="5.5"/>
+    <path d="M118 56 C 126 34, 150 30, 160 44 C 172 48, 180 60, 176 72 C 173 82, 160 88, 146 86 C 130 84, 118 74, 118 56 Z" fill="#fbbf24"/>
+    <path d="M152 78 C 160 84, 170 82, 175 74" stroke="#78500a" stroke-width="3"/>
+    <circle cx="138" cy="62" r="15" fill="#fde08a"/>
+    <circle cx="138" cy="62" r="9.5" fill="#fff"/>
+    <circle cx="140" cy="62" r="5" fill="#0b1210"/>
+    <circle cx="141.8" cy="60.2" r="1.6" fill="#fff"/>
+  </g>
+</svg>

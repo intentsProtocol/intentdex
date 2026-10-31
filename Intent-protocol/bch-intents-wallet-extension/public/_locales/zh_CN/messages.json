@@ -1,0 +1,4 @@
+{
+  "extName": { "message": "BCH Intents 钱包" },
+  "extDescription": { "message": "支持比特币现金、EVM、Solana 和比特币的自托管钱包。一组助记词，通行所有链。" }
+}

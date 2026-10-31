@@ -1,0 +1,4 @@
+{
+  "extName": { "message": "BCH Intents Wallet" },
+  "extDescription": { "message": "Self-custodial wallet for Bitcoin Cash, EVM, Solana and Bitcoin. One recovery phrase, all chains." }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@bch-intents/wdk-wallet-bch",
+  "version": "0.1.0",
+  "description": "A WDK wallet module for Bitcoin Cash: addresses, BCH and CashToken transfers, message signing. Pure JavaScript, no WebAssembly.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": {
+      "default": "./index.js"
+    },
+    "./package": {
+      "default": "./package.json"
+    }
+  },
+  "files": [
+    "index.js",
+    "src"
+  ],
+  "scripts": {
+    "test": "vitest run"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@noble/curves": "^1.9.7",
+    "@noble/hashes": "^1.8.0",
+    "@scure/bip32": "^1.7.0",
+    "@tetherto/wdk-wallet": "^1.0.0-beta.8",
+    "bip39": "3.1.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.9"
+  }
+}

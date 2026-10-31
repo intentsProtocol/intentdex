@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BCH Intents test dapp</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { max-width: 760px; margin: 32px auto; padding: 0 16px; line-height: 1.5; }
+    h1 { font-size: 20px; }
+    fieldset { border: 1px solid #8884; border-radius: 10px; margin: 14px 0; padding: 12px 14px; }
+    legend { font-weight: 700; padding: 0 6px; }
+    button { padding: 7px 12px; margin: 3px 4px 3px 0; border-radius: 8px; border: 1px solid #8886; background: #00d26a22; cursor: pointer; font: inherit; }
+    select { padding: 7px 9px; border-radius: 8px; border: 1px solid #8886; font: inherit; }
+    input { padding: 7px 9px; border-radius: 8px; border: 1px solid #8886; font: inherit; width: 100%; box-sizing: border-box; margin: 3px 0; }
+    pre { background: #8881; border-radius: 10px; padding: 12px; overflow: auto; max-height: 320px; font-size: 12px; white-space: pre-wrap; word-break: break-all; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    #status { font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>BCH Intents test dapp</h1>
+  <p>Exercises every method and event of <code>window.bchIntents</code>. Serve this file over http (for example <code>npx serve .</code>): the wallet does not inject into <code>file://</code> pages.</p>
+  <p>Provider: <span id="status">checking…</span> · Account: <code id="account">none</code> · Network: <code id="network">?</code></p>
+
+  <fieldset>
+    <legend>Connection</legend>
+    <button id="connect">bch_requestAccounts</button>
+    <button id="accounts">bch_accounts</button>
+    <button id="getNetwork">bch_getNetwork</button>
+    <button id="balance">bch_getBalance</button>
+    <button id="disconnect">wallet_disconnect</button>
+    <button id="unsupported">unsupported method</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Sign a message</legend>
+    <input id="message" value="Hello from the test dapp" aria-label="Message" />
+    <button id="sign">personal_sign</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Send a transaction</legend>
+    <input id="to" placeholder="bchtest:q… (defaults to your own address)" aria-label="Recipient" />
+    <div class="row">
+      <input id="satoshis" value="1000" aria-label="Satoshis" />
+      <input id="category" placeholder="token category (optional)" aria-label="Token category" />
+    </div>
+    <input id="tokenAmount" placeholder="token amount, base units (optional)" aria-label="Token amount" />
+    <button id="send">bch_sendTransaction</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Every chain</legend>
+    <button id="addresses">wallet_getAddresses</button>
+    <div class="row">
+      <select id="chain" aria-label="Chain"><option value="bch">Bitcoin Cash</option><option value="evm">EVM</option><option value="solana">Solana</option><option value="btc">Bitcoin</option></select>
+      <button id="signAny">wallet_signMessage</button>
+    </div>
+    <div class="row">
+      <input id="xnetwork" value="base-sepolia" aria-label="Network key" />
+      <input id="xamount" value="1000" aria-label="Amount, base units" />
+    </div>
+    <input id="xto" placeholder="recipient (defaults to your own address on that chain)" aria-label="Recipient" />
+    <input id="xtoken" placeholder="token contract / mint / category (optional; empty = native coin)" aria-label="Token" />
+    <button id="sendAny">wallet_sendTransaction</button>
+    <p style="font-size:12px;opacity:.7">Network keys: bch-chipnet, eth-sepolia, base-sepolia, arb-sepolia, op-sepolia, arc-testnet, solana-devnet, btc-testnet (and bch-mainnet, ethereum, base, arbitrum, optimism, arc, solana, btc-mainnet on mainnet). Amounts are base units: satoshis, wei, lamports.</p>
+  </fieldset>
+
+  <pre id="log" aria-live="polite"></pre>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const log = (label, value) => {
+      const text = value instanceof Error ? `ERROR ${value.code ?? ''} ${value.message}` : JSON.stringify(value);
+      $('log').textContent = `[${new Date().toLocaleTimeString()}] ${label}: ${text}\n` + $('log').textContent;
+      // The last result, for automated tests.
+      window.__last = { label, ok: !(value instanceof Error), value: value instanceof Error ? { code: value.code, message: value.message } : value };
+    };
+    const call = async (label, args) => {
+      try { const r = await window.bchIntents.request(args); log(label, r); return r; }
+      catch (e) { log(label, e); }
+    };
+    const showAccount = accounts => { $('account').textContent = accounts && accounts[0] ? accounts[0] : 'none'; };
+
+    function start(provider) {
+      $('status').textContent = provider.isBCHIntents ? 'detected' : 'unknown provider';
+      window.__events = [];
+      provider.on('accountsChanged', a => { window.__events.push(['accountsChanged', a]); showAccount(a); log('event accountsChanged', a); });
+      provider.on('networkChanged', n => { window.__events.push(['networkChanged', n]); $('network').textContent = n; log('event networkChanged', n); });
+      provider.on('connect', i => { window.__events.push(['connect', i]); log('event connect', i); });
+      provider.on('disconnect', e => { window.__events.push(['disconnect', e && e.message]); log('event disconnect', e && e.message); });
+
+      $('connect').onclick = async () => showAccount(await call('bch_requestAccounts', { method: 'bch_requestAccounts' }));
+      $('accounts').onclick = async () => showAccount(await call('bch_accounts', { method: 'bch_accounts' }));
+      $('getNetwork').onclick = async () => { const n = await call('bch_getNetwork', { method: 'bch_getNetwork' }); if (n) $('network').textContent = n; };
+      $('balance').onclick = () => call('bch_getBalance', { method: 'bch_getBalance' });
+      $('disconnect').onclick = async () => { await call('wallet_disconnect', { method: 'wallet_disconnect' }); showAccount([]); };
+      $('unsupported').onclick = () => call('eth_chainId', { method: 'eth_chainId' });
+      $('sign').onclick = () => call('personal_sign', { method: 'personal_sign', params: [$('message').value] });
+      $('send').onclick = () => {
+        const tx = { to: $('to').value.trim() || provider.selectedAddress, satoshis: Number($('satoshis').value) };
+        if ($('category').value.trim()) tx.token = { category: $('category').value.trim(), amount: $('tokenAmount').value.trim() || '1' };
+        return call('bch_sendTransaction', { method: 'bch_sendTransaction', params: [tx] });
+      };
+      $('addresses').onclick = async () => { window.__addresses = await call('wallet_getAddresses', { method: 'wallet_getAddresses' }); };
+      $('signAny').onclick = () => call('wallet_signMessage', { method: 'wallet_signMessage', params: [{ chain: $('chain').value, message: $('message').value }] });
+      $('sendAny').onclick = async () => {
+        const network = $('xnetwork').value.trim();
+        const own = window.__addresses || await provider.request({ method: 'wallet_getAddresses' });
+        const family = network.startsWith('bch') ? 'bch' : network.startsWith('solana') ? 'solana' : network.startsWith('btc') ? 'btc' : 'evm';
+        const tx = { network, to: $('xto').value.trim() || own[family], amount: $('xamount').value.trim() };
+        if ($('xtoken').value.trim()) tx.token = $('xtoken').value.trim();
+        return call('wallet_sendTransaction', { method: 'wallet_sendTransaction', params: [tx] });
+      };
+      $('getNetwork').click();
+      $('accounts').click();
+    }
+
+    if (window.bchIntents) start(window.bchIntents);
+    else {
+      const timer = setTimeout(() => { $('status').textContent = 'not installed'; }, 3000);
+      window.addEventListener('bchIntents#initialized', () => { clearTimeout(timer); start(window.bchIntents); }, { once: true });
+    }
+  </script>
+</body>
+</html>

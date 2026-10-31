@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Arc">
+  <!-- Placeholder mark for the Arc network until an official asset is added: an arc on a dark disc. -->
+  <circle cx="32" cy="32" r="32" fill="#0b1f3a"/>
+  <path d="M14 44a18 18 0 0 1 36 0" fill="none" stroke="#7fd4ff" stroke-width="7" stroke-linecap="round"/>
+</svg>

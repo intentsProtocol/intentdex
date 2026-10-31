@@ -33,3 +33,6 @@ yarn-error.log*
 inspect_privy.js
 inspect_privy_2.js
 check_balance.js
+
+.git_backup
+pitchfolderdocs/
