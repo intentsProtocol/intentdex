@@ -17,8 +17,7 @@ RUN npm ci
 COPY src/ src/
 COPY tsconfig.json ./
 
-RUN mkdir -p /data
-WORKDIR /data
+RUN mkdir -p /data data
 
 ENV NODE_ENV=production
 EXPOSE 3005
@@ -27,4 +26,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD node -e "fetch('http://localhost:'+(process.env.PORT||3005)+'/health').then(r=>r.ok?process.exit(0):process.exit(1)).catch(()=>process.exit(1))"
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["/app/node_modules/.bin/tsx", "/app/src/index.ts"]
+CMD ["npm", "start"]
