@@ -1,73 +1,27 @@
-# React + TypeScript + Vite
+# 🦎 Cham Wallet & Intents Protocol
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Self-Custodial Multi-Chain Ecosystem with On-Device AI Financial Agent
 
-Currently, two official plugins are available:
+Built for the **AI Yako: Own Your AI** Hackathon (Tether × Node NBO Nairobi)  
+**Track:** *Agentic Finance with WDK* (400 USDt track prize & 1,500 USDt overall)  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 📁 Submission Directory
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The complete codebase, documentation, and hackathon modules are located in the [**`Intent-protocol/`**](./Intent-protocol) directory:
 
-## Expanding the ESLint configuration
+👉 **[Go to Intent-protocol Codebase & Documentation →](./Intent-protocol)**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Core Modules inside `Intent-protocol/`:
+* [**`bch-intents-wallet-app`**](./Intent-protocol/bch-intents-wallet-app): React Native mobile app with **QVAC** on-device local LLM & **WDK** worklet.
+* [**`bch-intents-wallet-extension`**](./Intent-protocol/bch-intents-wallet-extension): Manifest V3 multi-chain browser wallet extension with inpage provider (`window.bch`).
+* [**`bch-intents-wallet-core`**](./Intent-protocol/bch-intents-wallet-core): Shared agent core, offline Mesh position planner, and strategy simulator.
+* [**`cham-wallet-web`**](./Intent-protocol/cham-wallet-web): Morphic liquid-glass showcase portal.
+* [**`wdk-wallet-bch`**](./Intent-protocol/wdk-wallet-bch): WDK module for Bitcoin Cash & CashTokens over WebSocket stream.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📖 Evaluation Resources for Judges
+* 📜 [**DEVELOPMENT_HISTORY.md**](./Intent-protocol/DEVELOPMENT_HISTORY.md) — Complete 89-commit chronological timeline and verified development milestones.
+* 📋 [**Executive Summary & Architecture**](./Intent-protocol/README.md) — Full reproduction guide, flight mode offline planning walkthrough, and test results.

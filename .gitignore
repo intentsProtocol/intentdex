@@ -36,3 +36,20 @@ check_balance.js
 
 .git_backup
 pitchfolderdocs/
+
+# Legacy root frontend
+/src/
+/public/
+/components.json
+/server.js
+/debug_privy.js
+/derive_key.js
+/eslint.config.js
+/index.html
+/package.json
+/package-lock.json
+/postcss.config.js
+/tailwind.config.js
+/tsconfig*.json
+/vite.config.ts
+/.env*
