@@ -130,3 +130,4 @@ This document preserves the comprehensive, chronological Git commit logs and dev
 * **9c5f3f4** - *2026-10-09* - feat: broadcastTransaction, for a transaction signed in an earlier step (tonybanks90)
 * **5976ff3** - *2026-10-09* - feat: Electrum client works with a Bare worklet's stream WebSocket (tonybanks90)
 * **0c15508** - *2026-10-09* - feat: WDK wallet module for Bitcoin Cash (tonybanks90)
+

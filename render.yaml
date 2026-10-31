@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: meshserver
+    runtime: docker
+    rootDir: Intent-protocol/cashtoken-relayer
+    dockerfilePath: Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NETWORK
+        value: chipnet
+
+  - type: web
+    name: cctp-swap-server
+    runtime: docker
+    rootDir: Intent-protocol/arc-cctp/cctp-swap-server
+    dockerfilePath: Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
